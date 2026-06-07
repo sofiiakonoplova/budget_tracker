@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="/static/style.css">
+    <title>Budget App</title>
+</head>
+
+<body>
+
+<h1>Budget Tracker</h1>
+
+<form method="POST" action="/add">
+    <select name="transaction_type" id="typeSelect">
+        <option>Income</option>
+        <option>Expense</option>
+    </select>
+
+    <select name="account_id">
+        <option value="1">Card</option>
+        <option value="2">Cash</option>
+    </select>
+
+    <input name="amount" placeholder="Amount">
+
+    <select name="category_id" id="categorySelect">
+
+    <script>
+        const categories = [
+            {% for cat in categories %}
+            {
+            id: "{{ cat.category_id }}",
+            name: "{{ cat.category_name }}",
+            type: "{{ cat.transaction_type }}"
+            },
+            {% endfor %}
+        ];
+
+        function loadCategories() {
+            let type = document.getElementById("typeSelect").value;
+            let categorySelect = document.getElementById("categorySelect");
+
+            categorySelect.innerHTML = "";
+
+            categories.forEach(cat => {
+                if (cat.type === type) {
+                    let option = document.createElement("option");
+                    option.value = cat.id;
+                    option.textContent = cat.name;
+                    categorySelect.appendChild(option);
+                }
+            });
+        }
+        document.getElementById("typeSelect")
+        .addEventListener("change", loadCategories);
+        loadCategories();
+    </script>
+
+    <input type="date" name="created_at" value="{{ today }}" required>
+
+    <button transaction_type="submit">Add</button>
+</form>
+
+
+<div class="month-nav">
+    <a href="/?month={{ prev_month }}">← Previous</a>
+    {{ month }}
+    <!-- {{ request.args.get('month', '') }} -->
+    <!-- {{ request.args.get('month', current_month) }} -->
+    <a href="/?month={{ next_month }}">Next →</a>
+</div>
+
+
+<h2>Transactions</h2>
+<div id="transactions-list">
+    {% for row in transactions %}
+    <div class="transaction-item">
+        {% if row.transaction_type == 'Income' %}
+        <span class="income">+${{ row.amount }}</span>
+        {% else %}
+        <span class="expense">-${{ row.amount }}</span>
+        {% endif %}
+        -
+        {{ row.category_name }}
+        -
+        {{ row.account_name }}
+        -
+        {{ row.created_at }}
+        <a href="/delete/{{ row.transaction_id }}">Delete</a>
+    </div>
+    {% endfor %}
+</div>
+
+<button id="showMoreBtn">Show More</button>
+
+
+<h2>Budgets</h2>
+
+<h3>Set Monthly Budget</h3>
+<form method="POST" action="/set_budget">
+    <input type="hidden" name="month" value="{{ month }}">
+    <select name="category_id" required>
+        {% for cat in expense_categories %}
+        <option value="{{ cat.category_id }}">
+            {{ cat.category_name }}
+        </option>
+        {% endfor %}
+    </select>
+    <input type="number" step="0.01" name="amount" placeholder="Amount" required>
+    <button type="submit">Set Budget</button>
+</form>
+
+{% for row in budgets %}
+<h4>{{ row.category_name }}</h4>
+
+<div class="bar">
+    <div class="fill {% if row.percent_used > 100 %}over{% endif %}"
+         style="width: {% if row.percent_used > 100 %}100{% else %}{{ row.percent_used }}{% endif %}%;">
+    </div>
+</div>
+
+{{ row.spent }} / {{ row.budget_amount }}
+({{ row.percent_used }}%)
+{% endfor %}
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
