@@ -2,7 +2,6 @@
 
 Personal finance management system featuring transaction tracking, monthly budgets, SQL analytics, and a Metabase dashboard.
 
----
 
 ## Overview
 
@@ -16,7 +15,6 @@ This project was built to solve that problem by providing:
 
 The system enables users to track spending, monitor budget performance, identify high-cost categories, and make data-driven decisions to improve savings and reduce unnecessary expenses.
 
----
 
 ## Key Features
 
@@ -57,7 +55,6 @@ The system enables users to track spending, monitor budget performance, identify
 - Cash balance overview
 - Savings tracking
 
----
 
 ## Screenshots
 
@@ -67,7 +64,6 @@ The system enables users to track spending, monitor budget performance, identify
 ### Analytics Dashboard (Metabase)
 ![Dashboard Screenshot](screenshots/metabase_dashboard.png)
 
----
 
 ## Usage
 
